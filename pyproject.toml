@@ -1,10 +1,10 @@
 [project]
 name = "AreYouHumanLib"
-version = "0.1.2"
+version = "0.1.5"
 authors = [
     {name = "Andrzej", email = "andrzej.krajnow1337@gmail.com"},
 ]
-description = "test"
+description = "."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -12,6 +12,7 @@ dependencies = [
     "emoji_data_python>=1.6.0",
     "alive-progress>=3.2.0",
     "requests>=2.32.0",
+    "aiogram>=3.18.0",
     "pillow>=11.2.1",
     "click>=8.1.8",
     "numpy>=2.2.4",

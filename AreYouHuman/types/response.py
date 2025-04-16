@@ -3,6 +3,10 @@ from collections import Counter
 from typing import List
 from io import BytesIO
 
+from aiogram.types import InlineKeyboardMarkup
+
+from .keyboard import Keyboard
+
 
 @dataclass
 class Response:
@@ -24,3 +28,11 @@ class Response:
         """Checking whether the user's choice matches the answers."""
 
         return Counter(emojis_user) == Counter(self.emojis_answer)
+
+    def get_keyboard(
+        self,
+        user_id: int
+    ) -> InlineKeyboardMarkup:
+        """Generating an inline keyboard for a bot."""
+
+        return Keyboard.generate(self.emojis_list, user_id)

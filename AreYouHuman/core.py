@@ -5,6 +5,7 @@ import math
 from typing import Tuple
 from typing import List
 from io import BytesIO
+from urllib.parse import unquote
 from urllib.parse import quote
 
 from PIL import ImageEnhance
@@ -25,7 +26,7 @@ class Captcha:
     def generate(self) -> Response:
         """Captcha generation and obtaining data for verification."""
         emojis_list: List[str] = list(numpy.random.choice(self.settings.emojis, size=15, replace=False))
-        emojis_answer: List[str] = emojis_list[:5]
+        emojis_answer: List[str] = list(numpy.random.choice(emojis_list, size=5, replace=False))
         background: Image.Image = self.background()
 
         emojis_pt: List[str] = [
@@ -49,7 +50,11 @@ class Captcha:
             )).enhance(random.uniform(0.2, 1.0))
 
             radius: int = size[0] // 2
-            while True:
+
+            place = False
+
+            for _ in range(50):
+
                 x, y = [random.randint(radius, s - radius) for s in self.settings.sizes]
 
                 minimal_distance: float = 0.5 * (radius + max([p_r for p_x, p_y, p_r in emojis_p], default=0))
@@ -57,7 +62,11 @@ class Captcha:
                 if not self.checking_for_overlap((x, y), emojis_p, minimal_distance):
                     background.paste(emoji, (x - radius, y - radius), emoji)
                     emojis_p.append((x, y, radius))
+                    place = True
                     break
+
+            if not place:
+                emojis_answer.remove(unquote(emoji_pt))
 
         image = BytesIO()
         background.save(image, format='png')
