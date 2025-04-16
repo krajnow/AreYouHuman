@@ -1,5 +1,4 @@
 from emoji_data_python import emoji_data
-from emoji_data_python import EmojiChar
 
 from dataclasses import dataclass
 from dataclasses import field
@@ -18,7 +17,7 @@ class Settings:
     :param gradient: *Optional*. Color gradient from start to end.
     """
 
-    emojis: List[EmojiChar] = field(default_factory=lambda: DefaultEmojis().emojis)
+    emojis: List[str] = field(default_factory=lambda: DefaultEmojis().emojis)
 
     sizes: Tuple[int, int] = (400, 300)
 
@@ -26,4 +25,4 @@ class Settings:
 
 
 class DefaultEmojis:
-    emojis: List[EmojiChar] = emoji_data
+    emojis: List[str] = [emoji.char for emoji in emoji_data]
