@@ -1,63 +1,50 @@
+import zipfile
 import os
-from pathlib import Path
-from typing import List
-from urllib.parse import quote
 
+import alive_progress
 import requests
 import click
-from alive_progress import alive_bar
-
-from AreYouHuman.types import DefaultEmojis
 
 
-EMOJIS_CDN: str = "https://emojicdn.elk.sh/%s?style=apple"
-EMOJIS: List[str] = DefaultEmojis.emojis
-OUTPUT: str = "emojis"
+GITHUB_ZIP = "https://github.com/krajnow/AreYouHuman/raw/refs/heads/master/emojis.zip"
 
 
 @click.group()
 def cli() -> None:
-    """Command Line Interface"""
-    pass
+    """Command Line Interface."""
 
 
 @cli.command()
-def download() -> None:
-    """Downloading all emojis for rendering."""
+@click.option("--output-zip", default="emojis.zip")
+def download(output_zip: str) -> None:
+    """
+    Downloading the archive with all the emojis for rendering.
+    Also unpacking it into the current directory.
+    """
+    try:
+        with requests.get(url=GITHUB_ZIP, stream=True) as response:
+            response.raise_for_status()
 
-    Path(OUTPUT).mkdir(exist_ok=True)
+            length = int(response.headers.get("content-length", 0))
 
-    files: List[str] = os.listdir(OUTPUT)
-    emojis: List[str] = [quote(emoji) for emoji in EMOJIS if quote(emoji) not in files]
-    length: int = len(emojis)
+            with alive_progress.alive_bar(
+                title=output_zip,
+                total=length,
+                bar="smooth",
+            ) as bar, open(output_zip, "wb") as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        file.write(chunk)
+                        bar(len(chunk))
 
-    with alive_bar(
-        length,
-        title="Downloading %s emojis." % length,
-        spinner="dots_waves2"
-    ) as bar:
-        for emoji in emojis:
-            url: str = EMOJIS_CDN % emoji
-            save_path: Path = Path(OUTPUT) / emoji
+        with zipfile.ZipFile(output_zip) as zip_file:
+            zip_file.extractall()
 
-            try:
-                download_file(url, save_path)
-                bar.text("D: %s" % emoji)
-            except Exception as e:
-                bar.text("E: %s (%s)" % (emoji, e))
-            finally:
-                bar()
+        os.remove(output_zip)
 
-    click.echo("All downloads completed!")
+        click.echo("✅ All downloads completed!")
 
-
-def download_file(
-    url: str,
-    save_path: Path
-) -> None:
-    """Download one emoji with a status bar."""
-    response = requests.get(url)
-    response.raise_for_status()
-
-    with open(save_path, 'wb') as f:
-        f.write(response.content)
+    except requests.exceptions.HTTPError as error:
+        click.echo(f"❌ HTTPError: {error}", err=True)
+    except Exception as error:
+        click.echo(f"❌ Error: {error}", err=True)
