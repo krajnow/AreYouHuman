@@ -1,28 +1,45 @@
+from dataclasses import dataclass, field
+from typing import List, Tuple
+
 from emoji_data_python import emoji_data
 
-from dataclasses import dataclass
-from dataclasses import field
 
-from typing import Tuple
-from typing import List
+class DefaultEmojis:
+    @classmethod
+    def get_all(cls) -> List[str]:
+        """Get all available emoji."""
+        return [emoji.char for emoji in emoji_data if emoji.char]
+
+
+@dataclass
+class ButtonSettings:
+    active: bool
+    text: str
+
+
+@dataclass
+class KeyboardSettings:
+    confirm: ButtonSettings = field(
+        default_factory=lambda: ButtonSettings(active=True, text="✅ Confirm")
+    )
+    refresh: ButtonSettings = field(
+        default_factory=lambda: ButtonSettings(active=True, text="🔄 Refresh")
+    )
+    row: int = 5
 
 
 @dataclass(frozen=True)
 class Settings:
-    """
-    Captcha generator settings.
+    """Configuration settings for captcha generation."""
 
-    :param emojis: *Optional*. A set of emojis for captcha generation.
-    :param sizes: *Optional*. The width and height of the canvas for drawing captcha.
-    :param gradient: *Optional*. Color gradient from start to end.
-    """
-
-    emojis: List[str] = field(default_factory=lambda: DefaultEmojis().emojis)
-
+    gradient: Tuple[Tuple[int, int, int], Tuple[int, int, int]] = (
+        (100, 200, 255),
+        (200, 162, 200)
+    )
+    emojis: List[str] = field(
+        default_factory=lambda: DefaultEmojis.get_all()
+    )
+    keyboard: KeyboardSettings = field(
+        default_factory=lambda: KeyboardSettings()
+    )
     sizes: Tuple[int, int] = (400, 300)
-
-    gradient: Tuple[Tuple[int, ...], Tuple[int, ...]] = ((100, 200, 255), (200, 162, 200))
-
-
-class DefaultEmojis:
-    emojis: List[str] = [emoji.char for emoji in emoji_data]

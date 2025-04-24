@@ -73,9 +73,11 @@ class Captcha:
         image.seek(0)
 
         return Response(
+            settings=self.settings,
             emojis_answer=emojis_answer,
             emojis_list=emojis_list,
-            image=image
+            emojis_user=list(),
+            image=image,
         )
 
     def background(self) -> Image.Image:
@@ -93,9 +95,9 @@ class Captcha:
 
     @staticmethod
     def checking_for_overlap(
-            emoji_position: Tuple[int, int],
-            existing: List[Tuple[int, ...]],
-            minimal_distance: float
+        emoji_position: Tuple[int, int],
+        existing: List[Tuple[int, ...]],
+        minimal_distance: float
     ) -> bool:
         """Checking if the emoji overlaps other emojis."""
         emoji_x, emoji_y = emoji_position
