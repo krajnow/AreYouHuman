@@ -10,22 +10,6 @@ pip install AreYouHumanLib
 > Before using it for the first time, you must download the emoji using the console command `AreYouHuman download` or download and unzip the archive:
 **[emojis.zip](https://github.com/krajnow/AreYouHuman/blob/master/emojis.zip)**
 
-## Usage
-```python
-from AreYouHuman import Captcha  
-
-from AreYouHuman.types import Response
-
-captcha = Captcha()  
-
-response: Response = captcha.generate()  
-
-# Correct answer (5 emojis)  
-print(response.emojis_answer)
-
-# Full emoji list (15 items: 10 wrong + 5 correct)  
-print(response.emojis_list)  
-
-# CAPTCHA image (BytesIO)  
-print(response.image)
-```
+## Examples
+**[Telegram Bot](https://github.com/krajnow/AreYouHuman/tree/master/examples/telegram_bot)** — an example of using the library in a telegram bot.
+**[Settings](https://github.com/krajnow/AreYouHuman/blob/master/examples/settings.py)** — example of changing library settings.
