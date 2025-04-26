@@ -5,10 +5,7 @@ from collections import Counter
 from io import BytesIO
 from typing import List, TYPE_CHECKING
 
-from aiogram.types import (
-    InlineKeyboardMarkup,
-    BufferedInputFile,
-)
+from aiogram.types import InlineKeyboardMarkup, BufferedInputFile
 
 from AreYouHuman.utils import keyboard
 

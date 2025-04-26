@@ -7,7 +7,8 @@ captcha = Captcha()  # The standard settings will be created.
 
 settings = Settings(
     gradient=((100, 200, 255), (200, 162, 200)),
-    sizes=(400, 300)
+    sizes=(400, 300),
+    emojis_dir="emojis"
 )
 captcha = Captcha(settings=settings)  # Setting user settings.
 

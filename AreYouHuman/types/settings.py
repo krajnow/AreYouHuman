@@ -25,7 +25,9 @@ class KeyboardSettings:
     refresh: ButtonSettings = field(
         default_factory=lambda: ButtonSettings(active=True, text="🔄 Refresh")
     )
-    row: int = 5
+    row: int = field(
+        default_factory=lambda: 5
+    )
 
 
 @dataclass(frozen=True)
@@ -43,3 +45,4 @@ class Settings:
         default_factory=lambda: KeyboardSettings()
     )
     sizes: Tuple[int, int] = (400, 300)
+    emojis_dir: str = "emojis"
